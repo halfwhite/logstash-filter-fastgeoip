@@ -8,7 +8,10 @@ describe LogStash::Filters::Fastgeoip do
       filter {
         fastgeoip {
           source => "ip"
-          database => "E:/halfwhite/IdeaProjects/FastGeoip/src/test/resources/GeoIPASNum2.csv"
+          asn_v4_data_file => "E:/halfwhite/IdeaProjects/FastGeoip/src/test/resources/GeoIPASNum2.csv"
+          asn_v6_data_file => "E:/halfwhite/IdeaProjects/FastGeoip/src/test/resources/GeoIPASNum2v6.csv"
+          country_data_dir => "E:/halfwhite/IdeaProjects/FastGeoip/src/test/resources/GeoLite2-Country-CSV_20170207"
+          target => "geoip" 
         }
       }
     CONFIG
@@ -16,7 +19,7 @@ describe LogStash::Filters::Fastgeoip do
 
     sample("ip" => "89.110.53.166") do
       expect(subject).to include("ip")
-      expect(subject.get('target')).to eq('AS8997 PJSC Rostelecom')
+      expect(subject.get('[geoip][asn]')).to eq(8997)
     end
   end
 end
