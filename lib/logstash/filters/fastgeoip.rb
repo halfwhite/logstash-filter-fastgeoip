@@ -52,8 +52,13 @@ class LogStash::Filters::Fastgeoip < LogStash::Filters::Base
     begin
       ip = event.get(@source)
       asn_assets = @geoip_facade.findAsnForIp(ip)
-      country = asn_assets.getCountry
-      country = @geoip_facade.findCountryForIp(ip) if country.nil?
+
+      if !asn_assets.nil?
+        country = asn_assets.getCountry
+        country = @geoip_facade.findCountryForIp(ip) if country.nil?
+      else
+        country = nil
+      end
 
       populate_geo_data(event, asn_assets, country)
       filter_matched(event)
@@ -73,7 +78,7 @@ class LogStash::Filters::Fastgeoip < LogStash::Filters::Base
         when "asn"
           event.set("[#{@target}][asn]", asn_assets.getAsn) unless asn_assets.nil?
         when "as_name"
-          event.set("[#{@target}][as_name]", asn_assets.getCompany) unless asn_assets.nill?
+          event.set("[#{@target}][as_name]", asn_assets.getCompany) unless asn_assets.nil?
         when "continent_code"
           event.set("[#{@target}][continent_code]", country.getContinentCode) unless country.nil?
         when "continent_name"
