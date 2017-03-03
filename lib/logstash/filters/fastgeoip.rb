@@ -60,7 +60,12 @@ class LogStash::Filters::Fastgeoip < LogStash::Filters::Base
         country = nil
       end
 
-      populate_geo_data(event, asn_assets, country)
+      if asn_assets.nil? && country.nil?
+        tag_unsuccessful_lookup(event)
+      else
+        populate_geo_data(event, asn_assets, country)
+      end
+
       filter_matched(event)
     rescue java.lang.Exception => e
       @logger.error("Unknown error while looking up GeoIP data", :exception => e, :field => @source, :ip => ip, :event => event)

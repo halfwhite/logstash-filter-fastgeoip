@@ -21,5 +21,10 @@ describe LogStash::Filters::Fastgeoip do
       expect(subject).to include("ip")
       expect(subject.get('[geoip][asn]')).to eq(8997)
     end
+
+    sample("ip" => "127.0.0.1") do
+      expect(subject).to include("ip")
+      expect(subject.get('[tags]')).to eq(["_geoip_lookup_failure"])
+    end
   end
 end
